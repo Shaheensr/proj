@@ -56,7 +56,8 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         body: Form(
             key: _formKey,
-            child: Column(children: [
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const SizedBox(height: 20.0),
               TextFormField(
                 autocorrect: false,
@@ -176,20 +177,19 @@ class _RegisterPageState extends State<RegisterPage> {
           await _auth.createUserWithEmailAndPassword(
               email: _emailController.text, password: _passwordController.text);
 
-      _db
+      /* _db
           .collection("users")
           .doc(userCredential.user!.uid)
           .set({
             "firstName": _firstnameController.text,
             "lastName": _lastnameController.text,
-            "registeredTime": Timestamp.now(),
-            "role": "User"
-      })
+            "registeredTime": Timestamp.now()
+          })
           .then((value) => null)
-          .onError((error, stackTrace) => null);
+          .onError((error, stackTrace) => null); */
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Something Else")));
+          .showSnackBar(const SnackBar(content: Text("An error has occured")));
     } catch (e) {
       print(e);
     }

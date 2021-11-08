@@ -112,7 +112,10 @@ class _LoginState extends State<LoginPage> {
                         key: _formKey,
                         child: Column(
                           children: <Widget>[
-                            // Add TextFormFields and ElevatedButton here.
+                            SizedBox(
+                              height: 200,
+                              child: Text("Goal Tracking App"),
+                            ),
                             emailInput,
                             passwordInput,
                             submitButton,
