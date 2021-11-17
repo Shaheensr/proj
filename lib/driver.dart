@@ -1,14 +1,16 @@
-import 'package:proj/views/login_view.dart';
-import 'package:proj/views/home_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'Screens/login_view.dart';
+import 'Screens/home_view.dart';
 import 'package:flutter/material.dart';
+import 'authenticate.dart';
 
+//driver will see if user is auth
 class AppDriver extends StatelessWidget {
   AppDriver({Key? key}) : super(key: key);
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
-    return _auth.currentUser == null ? const LoginPage() : HomePage();
+    return Authenticate().authorizedUser() == null
+        ? const LoginPage()
+        : HomePage();
   }
 }

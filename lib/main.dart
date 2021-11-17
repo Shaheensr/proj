@@ -1,8 +1,11 @@
-import 'package:proj/driver.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:splashscreen/splashscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'Screens/login_view.dart';
+import 'driver.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(App());
 }
@@ -27,7 +30,7 @@ class _AppState extends State<App> {
             if (snapshot.hasError) {
               return SomethingWentWrong();
             } else if (snapshot.connectionState == ConnectionState.done) {
-              return AppDriver();
+              return LoginPage();
             } else {
               return Container(color: Colors.yellow);
             }

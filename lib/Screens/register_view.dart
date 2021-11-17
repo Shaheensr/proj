@@ -1,6 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../authenticate.dart';
+import '../driver.dart';
+import 'dart:io';
+import 'home_view.dart';
+import 'package:intl/intl.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -10,16 +17,15 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  File? _image;
 
   late TextEditingController _emailController,
       _reemailController,
       _passwordController,
       _repasswordController,
       _firstnameController,
-      _lastnameController,
-      _phonenumberController;
+      _lastnameController;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -30,7 +36,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _repasswordController = TextEditingController();
     _firstnameController = TextEditingController();
     _lastnameController = TextEditingController();
-    _phonenumberController = TextEditingController();
 
     super.initState();
   }
@@ -43,7 +48,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _repasswordController.dispose();
     _firstnameController.dispose();
     _lastnameController.dispose();
-    _phonenumberController.dispose();
 
     super.dispose();
   }
@@ -51,14 +55,16 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Register"),
-        ),
-        body: Form(
-            key: _formKey,
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const SizedBox(height: 20.0),
+      appBar: AppBar(
+        title: Text("Register"),
+      ),
+      body: Container(
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 43.0),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(children: [
+              const SizedBox(height: 3),
               TextFormField(
                 autocorrect: false,
                 controller: _emailController,
@@ -69,12 +75,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   return null;
                 },
                 decoration: const InputDecoration(
-                    labelText: "EMAIL ADDRESS",
+                    labelText: "Email Address",
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    hintText: 'Enter Email'),
+                    hintText: 'Enter email address'),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 7),
               TextFormField(
                 autocorrect: false,
                 controller: _reemailController,
@@ -85,12 +91,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   return null;
                 },
                 decoration: const InputDecoration(
-                    labelText: "RE ENTER EMAIL ADDRESS",
+                    labelText: "Re-Enter Email Address",
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    hintText: 'Re-Enter Email'),
+                    hintText: 'Re-enter email address'),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 7),
               TextFormField(
                 autocorrect: false,
                 controller: _passwordController,
@@ -101,12 +107,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   return null;
                 },
                 decoration: const InputDecoration(
-                    labelText: "ENTER PASSWORD",
+                    labelText: "Enter Password",
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    hintText: 'Enter Password'),
+                    hintText: 'Enter password'),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 7),
               TextFormField(
                 autocorrect: false,
                 controller: _repasswordController,
@@ -117,12 +123,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   return null;
                 },
                 decoration: const InputDecoration(
-                    labelText: "VERIFY PASSWORD",
+                    labelText: "Verify Password",
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    hintText: 'Verify Password'),
+                    hintText: 'Verify password'),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 7),
               TextFormField(
                 autocorrect: false,
                 controller: _firstnameController,
@@ -133,67 +139,119 @@ class _RegisterPageState extends State<RegisterPage> {
                   return null;
                 },
                 decoration: const InputDecoration(
-                    labelText: "Enter Firstname",
+                    labelText: "Enter First Name",
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    hintText: 'Enter Firstname'),
+                    hintText: 'Enter first name'),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 7),
               TextFormField(
                 autocorrect: false,
                 controller: _lastnameController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Lastname cannot be empty';
+                    return 'Last name cannot be empty';
                   }
                   return null;
                 },
                 decoration: const InputDecoration(
-                    labelText: "Enter Lastname",
+                    labelText: "Enter Last Name",
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    hintText: 'Enter Lastname'),
+                    hintText: 'Enter last name'),
               ),
-              const SizedBox(height: 2.0),
+              const SizedBox(height: 7),
+              OutlinedButton(
+                  onPressed: () {
+                    image(true);
+                  },
+                  child: const Text("Add Photo")),
+              const SizedBox(height: 3),
               OutlinedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Processing Data')));
-
                     setState(() {
                       register();
                     });
                   }
                 },
                 child: const Text('Submit'),
-              )
-            ])));
+              ),
+            ]),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> register() async {
     try {
+      var authenticate = Authenticate().authorize();
       UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+          await authenticate.createUserWithEmailAndPassword(
               email: _emailController.text, password: _passwordController.text);
-
-      /* _db
-          .collection("users")
+      _db
+          .collection("user")
           .doc(userCredential.user!.uid)
           .set({
-            "firstName": _firstnameController.text,
-            "lastName": _lastnameController.text,
-            "registeredTime": Timestamp.now()
+            "first_name": _firstnameController.text,
+            "last_name": _lastnameController.text,
+            "role": "customer",
+            "uid": userCredential.user!.uid,
+            "register_date": DateTime.now(),
+            "age": ' ',
+            "bio": ' ',
+            "hometown": ' ',
+            "url": ' ',
           })
-          .then((value) => null)
-          .onError((error, stackTrace) => null); */
+          .then((value) => addImage())
+          .onError((error, stackTrace) => null);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (con) => AppDriver()));
+      // });
+
     } on FirebaseAuthException catch (e) {
+      print("eee${e.message}");
+      String rr = e.message ?? " ";
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("An error has occured")));
+          .showSnackBar(SnackBar(content: Text(e.message ?? " ")));
     } catch (e) {
       print(e);
     }
 
     setState(() {});
+  }
+
+  Future image(bool gallery) async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile image;
+    if (gallery) {
+      image = (await imagePicker.pickImage(
+          source: ImageSource.gallery, imageQuality: 50))!;
+    } else {
+      image = (await imagePicker.pickImage(
+          source: ImageSource.camera, imageQuality: 50))!;
+    }
+    setState(() {
+      _image = File(image.path);
+    });
+  }
+
+  Future<void> addImage() async {
+    String id = Authenticate().user();
+
+    var storage = FirebaseStorage.instance;
+    TaskSnapshot snapshot = await storage.ref().child(id).putFile(_image!);
+    if (snapshot.state == TaskState.success) {
+      final String downloadUrl = await snapshot.ref.getDownloadURL();
+      await FirebaseFirestore.instance
+          .collection("user")
+          .doc(id)
+          .update({"url": downloadUrl});
+    }
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (con) => AppDriver()));
   }
 }
