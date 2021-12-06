@@ -18,6 +18,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController taskTitleInputController = TextEditingController();
   TextEditingController taskDescripInputController = TextEditingController();
   User? user = FirebaseAuth.instance.currentUser;
+  bool isSelected = false;
 
   @override
   initState() {
@@ -150,6 +151,14 @@ class _HomePageState extends State<HomePage> {
                               fontSize: 20,
                               color: Colors.grey[600],
                               fontWeight: FontWeight.bold),
+                        ),
+                        leading: Checkbox(
+                          value: isSelected,
+                          onChanged: (bool? val){
+                            setState(() {
+                              isSelected = val!;
+                            });
+                          },
                         ),
                         trailing: IconButton(
                           icon: Icon(
