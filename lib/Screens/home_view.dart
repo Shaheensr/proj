@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController taskTitleInputController = TextEditingController();
   TextEditingController taskDescripInputController = TextEditingController();
+  User? user = FirebaseAuth.instance.currentUser;
 
   @override
   initState() {
@@ -64,7 +65,9 @@ class _HomePageState extends State<HomePage> {
                       .collection('goal')
                       .add({
                         "title": taskTitleInputController.text,
-                        "description": taskDescripInputController.text
+                        "description": taskDescripInputController.text,
+                        "user": user!.uid,
+                        "isCompleted": false
                       })
                       .then((result) => {
                             Navigator.pop(context),
@@ -117,7 +120,10 @@ class _HomePageState extends State<HomePage> {
         onPressed: () => _showDialog(),
       ),
       body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection("goal").snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection("goal")
+              .where("user", isEqualTo: user!.uid)
+              .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return Center(child: CircularProgressIndicator());
