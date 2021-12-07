@@ -201,10 +201,7 @@ class _RegisterPageState extends State<RegisterPage> {
             "role": "customer",
             "uid": userCredential.user!.uid,
             "register_date": DateTime.now(),
-            "age": ' ',
-            "bio": ' ',
-            "hometown": ' ',
-            "url": ' ',
+            "email": _emailController.text
           })
           .then((value) => addImage())
           .onError((error, stackTrace) => null);

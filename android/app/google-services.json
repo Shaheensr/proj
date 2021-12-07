@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "345694090664",
-    "project_id": "mobileappproj-3548e",
-    "storage_bucket": "mobileappproj-3548e.appspot.com"
+    "project_number": "925949632998",
+    "project_id": "trackgoals-ef975",
+    "storage_bucket": "trackgoals-ef975.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:345694090664:android:dfa391e3798a7f48cc999d",
+        "mobilesdk_app_id": "1:925949632998:android:5ef992b296cdfdaf2df627",
         "android_client_info": {
           "package_name": "com.example.proj"
         }
       },
       "oauth_client": [
         {
-          "client_id": "345694090664-vu0dm8qc6ni15h28isml7fq6j3o0s9em.apps.googleusercontent.com",
+          "client_id": "925949632998-n6kh5tgcjb861hqndemoll7eukiegr1l.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyALRwYMccSZvi91vMO8zIbYmjqE7Jo3bFI"
+          "current_key": "AIzaSyBRss-NJ9lhdtxgKzSK_apQVOMSwmYI9js"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "345694090664-vu0dm8qc6ni15h28isml7fq6j3o0s9em.apps.googleusercontent.com",
+              "client_id": "925949632998-n6kh5tgcjb861hqndemoll7eukiegr1l.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
