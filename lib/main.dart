@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'Screens/home_view.dart';
 import 'Screens/login_view.dart';
 import 'driver.dart';
+import 'Screens/share_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +39,10 @@ class _AppState extends State<App> {
           },
         ),
       ),
+      routes: {
+        'home': (context) => HomePage(),
+        'share': (context) => ShareGoals(),
+      },
     );
   }
 }

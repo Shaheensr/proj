@@ -22,6 +22,10 @@ class _HomePageState extends State<HomePage> {
   bool completedGoals = false;
   String title = "List of Goals";
 
+  navigateToPage(BuildContext context, String page) {
+    Navigator.of(context).pushNamedAndRemoveUntil(page, (Route<dynamic> route) => false);
+  }
+
   @override
   initState() {
     taskTitleInputController = TextEditingController();
@@ -144,6 +148,18 @@ class _HomePageState extends State<HomePage> {
 
               },
             ),
+            ListTile(
+              title: const Text('Chat'),
+              onTap: () {
+                Navigator.pop(context); 
+              },
+            ),
+            ListTile(
+              title: const Text('Share Goals'),
+              onTap: () {
+                navigateToPage(context, 'share');
+              },
+            ),    
           ],
         ),
       ),
