@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text('Drawer Header'),
+              child: Text('Menu'),
             ),
             ListTile(
               title: const Text('Current Goals'),
