@@ -148,6 +148,7 @@ class _HomePageState extends State<HomePage> {
           stream: FirebaseFirestore.instance
               .collection("goal")
               .where("user", isEqualTo: user!.uid)
+              .where("isCompleted", isEqualTo: false)
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
