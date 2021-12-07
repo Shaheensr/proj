@@ -19,6 +19,8 @@ class _HomePageState extends State<HomePage> {
   TextEditingController taskDescripInputController = TextEditingController();
   User? user = FirebaseAuth.instance.currentUser;
   bool isSelected = false;
+  bool completedGoals = false;
+  String title = "List of Goals";
 
   @override
   initState() {
@@ -90,7 +92,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "List of Goals",
+          title,
           style: TextStyle(
               fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
         ),
@@ -123,13 +125,23 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               title: const Text('Current Goals'),
               onTap: () {
-                Navigator.pop(context);
+                setState(() {
+                  completedGoals = false;
+                  title = "List of Goals";
+                  Navigator.pop(context);
+                });
+                
               },
             ),
             ListTile(
               title: const Text('Completed Goals'),
               onTap: () {
-                Navigator.pop(context);
+                setState(() {
+                  completedGoals = true;
+                  title = "Completed Goals";
+                  Navigator.pop(context); 
+                });
+
               },
             ),
           ],
@@ -148,7 +160,7 @@ class _HomePageState extends State<HomePage> {
           stream: FirebaseFirestore.instance
               .collection("goal")
               .where("user", isEqualTo: user!.uid)
-              .where("isCompleted", isEqualTo: false)
+              .where("isCompleted", isEqualTo: completedGoals)
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
@@ -187,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                             snapshot.data!.docs[index].reference.update({'isCompleted': true});
 
                           },
-                          ),
+                        ),
                         trailing: IconButton(
                           icon: Icon(
                             Icons.delete,
