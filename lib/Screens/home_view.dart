@@ -177,14 +177,17 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.grey[600],
                               fontWeight: FontWeight.bold),
                         ),
-                        leading: Checkbox(
-                          value: isSelected,
-                          onChanged: (bool? val){
-                            setState(() {
-                              isSelected = val!;
-                            });
+                        leading: IconButton(
+                          icon: Icon(
+                            Icons.check,
+                            size: 30,
+                            color: Colors.green,
+                          ),
+                          onPressed: (){
+                            snapshot.data!.docs[index].reference.update({'isCompleted': true});
+
                           },
-                        ),
+                          ),
                         trailing: IconButton(
                           icon: Icon(
                             Icons.delete,
