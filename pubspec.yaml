@@ -41,7 +41,9 @@ dependencies:
   firebase_dynamic_links: "^2.0.10"
   firebase_analytics: "^8.3.3"
   splashscreen:
-  shared_preferences: 
+  shared_preferences:
+  linkedin_login: ^2.0.1
+  twitter_login: ^4.0.1
 
 
   # The following adds the Cupertino Icons font to your application.
