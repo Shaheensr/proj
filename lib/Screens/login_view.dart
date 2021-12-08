@@ -1,3 +1,4 @@
+import 'package:linkedin_login/linkedin_login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -45,7 +46,7 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
       final Uri? deepLink = dynamicLink?.link;
 
       if (deepLink != null) {
-        print("dd${deepLink.toString()}");
+        print("${deepLink.toString()}");
         _signInWithEmailAndLink(deepLink.toString());
       }
     }, onError: (OnLinkErrorException e) async {
@@ -59,7 +60,7 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
 
     if (deepLink != null) {
       setState(() {
-        print("dzzzd${deepLink.toString()}");
+        print("${deepLink.toString()}");
 
         _link = deepLink.toString();
 
@@ -76,20 +77,20 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _signInWithEmailAndLink(String dd) async {
-    print("ddddddddd$dd ");
+  Future<void> _signInWithEmailAndLink(String el) async {
+    print("$el ");
 
     final FirebaseAuth user = FirebaseAuth.instance;
-    bool validLink = await user.isSignInWithEmailLink(dd);
+    bool validLink = await user.isSignInWithEmailLink(el);
     if (validLink) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? mail = await prefs.getString("mail");
       try {
-        print("link$dd ");
+        print("link$el ");
         print("email$mail ");
 
         final User =
-            await user.signInWithEmailLink(email: mail!, emailLink: dd);
+            await user.signInWithEmailLink(email: mail!, emailLink: el);
         if (User != null)
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => HomePage()));
@@ -220,6 +221,73 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
       ),
     );
 
+    final twitter = CircleAvatar(
+      radius: 27,
+      backgroundColor: Colors.black,
+      child: CircleAvatar(
+        radius: 25,
+        backgroundColor: Colors.white,
+        child: IconButton(
+            icon: Image.asset(
+              'assets/twitter.png',
+              height: 20,
+              width: 20,
+            ),
+            onPressed: () {
+              Authenticate().twitterSignIn(context);
+            }),
+      ),
+    );
+
+    UserObject user;
+    bool logoutUser = false;
+    const String redirectUrl =
+        'https://mobileappproj-3548e.firebaseapp.com/__/auth/handler';
+    const String clientId = '785bget4accpyw';
+    const String clientSecret = 'gkAId7PiEe6mQUmV';
+    final linkedIn = LinkedInButtonStandardWidget(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => LinkedInUserWidget(
+              appBar: AppBar(
+                title: Text('OAuth User'),
+              ),
+              destroySession: logoutUser,
+              redirectUrl: redirectUrl,
+              clientId: clientId,
+              clientSecret: clientSecret,
+              projection: [
+                ProjectionParameters.id,
+                ProjectionParameters.localizedFirstName,
+                ProjectionParameters.localizedLastName,
+                ProjectionParameters.firstName,
+                ProjectionParameters.lastName,
+                ProjectionParameters.profilePicture,
+              ],
+              onError: (UserFailedAction e) {
+                print('Error: ${e.toString()}');
+                print('Error: ${e.stackTrace.toString()}');
+              },
+              onGetUserProfile: (UserSucceededAction linkedInUser) {
+                // print('Access token ${linkedInUser.user.token.accessToken}');
+                // print('User id: ${linkedInUser.user.userId}');
+                Authenticate().linkedInSignIn(context);
+
+                setState(() {
+                  logoutUser = false;
+                });
+
+                Navigator.pop(context);
+              },
+            ),
+            fullscreenDialog: true,
+          ),
+        );
+      },
+    );
+
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
@@ -238,10 +306,13 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
                     child: Column(
                       children: <Widget>[
                         emailInput,
+                        SizedBox(height: 15),
                         passwordInput,
                         submitButton,
                         SizedBox(height: 15),
                         registerButton,
+                        SizedBox(height: 30),
+                        linkedIn,
                       ],
                     ),
                   ),
@@ -249,10 +320,12 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
                     child: Row(
                       children: <Widget>[
                         SizedBox(height: 100),
-                        SizedBox(width: 115),
+                        SizedBox(width: 60),
                         google,
                         SizedBox(width: 30),
-                        facebook
+                        facebook,
+                        SizedBox(width: 30),
+                        twitter,
                       ],
                     ),
                   ),
@@ -292,4 +365,14 @@ class _LoginState extends State<LoginPage> with WidgetsBindingObserver {
     );
     return false;
   }
+}
+
+class UserObject {
+  String firstName, lastName, email, profileImageUrl;
+
+  UserObject(
+      {required this.firstName,
+      required this.lastName,
+      required this.email,
+      required this.profileImageUrl});
 }
