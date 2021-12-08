@@ -64,6 +64,7 @@ class _ShareGoalsState extends State<ShareGoals> {
             ),
             ListTile(
               title: const Text('Current Goals'),
+              leading: Icon(Icons.list_rounded),
               onTap: () {
                 setState(() {
                   completedGoals = false;
@@ -78,6 +79,7 @@ class _ShareGoalsState extends State<ShareGoals> {
             ),
             ListTile(
               title: const Text('Completed Goals'),
+              leading: Icon(Icons.checklist_rounded),
               onTap: () {
                 navigateToPage(context, "home");
                 setState(() {
@@ -90,12 +92,14 @@ class _ShareGoalsState extends State<ShareGoals> {
             ),
             ListTile(
               title: const Text('Chat'),
+              leading: Icon(Icons.chat),
               onTap: () {
                 Navigator.pop(context); 
               },
             ),
             ListTile(
               title: const Text('Share Goals'),
+              leading: Icon(Icons.forum_rounded),
               onTap: () {
                 navigateToPage(context, 'share');
               },
