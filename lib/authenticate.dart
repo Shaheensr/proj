@@ -1,3 +1,6 @@
+import 'package:twitter_login/entity/auth_result.dart';
+import 'package:twitter_login/twitter_login.dart';
+import 'package:linkedin_login/linkedin_login.dart';
 import 'Screens/home_view.dart';
 import 'driver.dart';
 import 'package:flutter/material.dart';
@@ -237,7 +240,124 @@ class Authenticate {
             context, MaterialPageRoute(builder: (con) => HomePage()));
       }
     } catch (e) {
-      print("rrr$e");
+      print("$e");
+    }
+  }
+
+  // apiKey: "ZWGMqbB3KR8lrf9EQjWUVYRPo",
+  // apiSecretKey: "EtvN1KPlR6ci2KEFAjfWUkilj1b4gGlBezaiUhXPlwOz7U6V0l",
+  // redirectURI: "https://mobileappproj-3548e.firebaseapp.com/__/auth/handler",
+
+  final TwitterLogin twitterLogin = new TwitterLogin(
+    apiKey: 'ZWGMqbB3KR8lrf9EQjWUVYRPo',
+    redirectURI: 'https://mobileappproj-3548e.firebaseapp.com/__/auth/handler',
+    apiSecretKey: 'EtvN1KPlR6ci2KEFAjfWUkilj1b4gGlBezaiUhXPlwOz7U6V0l',
+  );
+  void twitterSignIn(context) async {
+    try {
+      final AuthResult twUser = await twitterLogin.login();
+      final AuthCredential twitterCredential = TwitterAuthProvider.credential(
+          accessToken: 'ZWGMqbB3KR8lrf9EQjWUVYRPo',
+          secret: 'EtvN1KPlR6ci2KEFAjfWUkilj1b4gGlBezaiUhXPlwOz7U6V0l');
+
+      final userCredential =
+          await _auth.signInWithCredential(twitterCredential);
+      final User? user = userCredential.user;
+
+      final QuerySnapshot result = await FirebaseFirestore.instance
+          .collection('user')
+          .where('first_name', isEqualTo: user!.displayName)
+          .limit(1)
+          .get();
+      final List<DocumentSnapshot> docs = result.docs;
+      if (docs.isEmpty) {
+        print("empty");
+        try {
+          _db
+              .collection("user")
+              .doc()
+              .set({
+                "first_name": user.displayName,
+                "last_name": "",
+                "phone": '',
+                "role": 'customer',
+                "url": user.photoURL,
+                "uid": user.uid,
+                "register_date": DateTime.now(),
+                "age": ' ',
+                "bio": ' ',
+                "hometown": ' ',
+              })
+              .then((value) => null)
+              .onError((error, stackTrace) => null);
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (con) => AppDriver()));
+        } on FirebaseAuthException catch (e) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Error")));
+        } catch (e) {
+          print(e);
+        }
+      } else {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (con) => HomePage()));
+      }
+    } catch (e) {
+      print("$e");
+    }
+  }
+
+// Client ID:785bget4accpyw
+// Client Secret:gkAId7PiEe6mQUmV
+  void linkedInSignIn(context) async {
+    try {
+      final AuthCredential linkedInCredential = TwitterAuthProvider.credential(
+          accessToken: '785bget4accpyw', secret: 'gkAId7PiEe6mQUmV');
+
+      final userCredential =
+          await _auth.signInWithCredential(linkedInCredential);
+      final User? user = userCredential.user;
+
+      final QuerySnapshot result = await FirebaseFirestore.instance
+          .collection('user')
+          .where('first_name', isEqualTo: user!.displayName)
+          .limit(1)
+          .get();
+      final List<DocumentSnapshot> docs = result.docs;
+      if (docs.isEmpty) {
+        print("empty");
+        try {
+          _db
+              .collection("user")
+              .doc()
+              .set({
+                "first_name": user.displayName,
+                "last_name": "",
+                "phone": '',
+                "role": 'customer',
+                "url": user.photoURL,
+                "uid": user.uid,
+                "register_date": DateTime.now(),
+                "age": ' ',
+                "bio": ' ',
+                "hometown": ' ',
+              })
+              .then((value) => null)
+              .onError((error, stackTrace) => null);
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (con) => AppDriver()));
+        } on FirebaseAuthException catch (e) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Error")));
+        } catch (e) {
+          print(e);
+        }
+      } else {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (con) => HomePage()));
+      }
+    } catch (e) {
+      print("$e");
     }
   }
 
@@ -254,6 +374,8 @@ class Authenticate {
                   await _auth.signOut();
                   await GoogleSignIn().signOut();
                   await FacebookAuth.instance.logOut();
+                  await TwitterLoginStatus.cancelledByUser;
+                  // await LinkedInLoginStatus.cancelledByUser;
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('User logged out.')));
                   Navigator.pushReplacement(context,
@@ -267,3 +389,10 @@ class Authenticate {
         });
   }
 }
+
+class Resource {
+  final Status status;
+  Resource({required this.status});
+}
+
+enum Status { Success, Error, Cancelled }
